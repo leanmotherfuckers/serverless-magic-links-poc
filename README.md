@@ -1,4 +1,4 @@
-# Cognito - better magic links
+# Cognito magic links POC
 
 This simple POC shows a good way to create a [user-friendly magic link login system](https://uxdesign.cc/user-friendly-magic-links-e39023ec3e2) using AWS Cognito, Lambda and the Serverless framework.
 
@@ -9,7 +9,7 @@ While functional and safe, this is not production-style code.
 Some important things to note about this approach, which is different from most other tutorials and example code found online:
 
 * This creates login links that are valid for longer than the default 3 minutes limit in Cognito. Link expiry can be configured without any limits.
-* You don't need to open the link in your email in the same browser you requested the link in.
+* You don't need to open the magic link in the same browser you requested the link in for your session to be approved.
 
 
 ## Online demo
