@@ -1,0 +1,158 @@
+service: poc-magic-links
+
+# Attaching handlers
+functions:
+  # 0. Initiates sign-in
+  login:
+    handler: api/login.handler
+    events:
+      - http:
+          path: /login
+          method: post
+          cors: true
+
+  # 1. Define auth challenge (letting Cognito know that we have a custom challenge)
+  define-auth-challenge:
+    handler: api/define-auth-challenge.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.userPoolName}
+          trigger: DefineAuthChallenge
+          existing: true
+
+  # 2. Create the actual auth challenge
+  create-auth-challenge:
+    handler: api/create-auth-challenge.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.userPoolName}
+          trigger: CreateAuthChallenge
+          existing: true
+
+  # 3. Verify auth challenge
+  verify-auth-challenge:
+    handler: api/verify-auth-challenge.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.userPoolName}
+          trigger: VerifyAuthChallengeResponse
+          existing: true
+
+# Set up Cognito & S3
+resources:
+  Resources:
+    UserPool:
+      Type: "AWS::Cognito::UserPool"
+      Properties:
+        MfaConfiguration: OFF
+        UserPoolName: ${self:custom.userPoolName}
+        AutoVerifiedAttributes:
+          - email
+        UsernameAttributes:
+          - email
+        Schema:
+          - Name: email
+            Mutable: true
+            Required: true
+          - Name: name
+            Mutable: true
+          - Name: authChallenge
+            AttributeDataType: String
+            Mutable: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: False
+            RequireNumbers: True
+            RequireSymbols: False
+            RequireUppercase: True
+    UserPoolClient:
+      Type: "AWS::Cognito::UserPoolClient"
+      Properties:
+        ClientName: ${self:custom.userPoolClientName}
+        UserPoolId:
+          Ref: UserPool
+        ExplicitAuthFlows:
+          - ADMIN_NO_SRP_AUTH
+        GenerateSecret: false
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthScopes:
+          - phone
+          - email
+          - openid
+        SupportedIdentityProviders:
+          - COGNITO
+        CallbackURLs:
+          - http://localhost:3001/auth/callback
+        DefaultRedirectURI: http://localhost:3001/auth/callback
+    WebBucket:
+      Type: "AWS::S3::Bucket"
+      Properties:
+        BucketName: poc-user-pool-web
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+
+# Default serverless stuff
+provider:
+  name: aws
+  profile: schof
+  runtime: nodejs10.x
+  region: eu-west-1
+  stage: dev
+  environment:
+    URL: {"Fn::Join": ["", ["https://", {"Ref": "ApiGatewayRestApi"}, ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}"]]}
+    USER_POOL_ID: {"Ref": "UserPool"}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - cognito-idp:AdminGetUser
+        - cognito-idp:AdminUpdateUserAttributes
+      Resource:
+        - {"Fn::GetAtt": [UserPool, Arn]}
+
+plugins:
+  - serverless-apigateway-service-proxy
+  - serverless-s3-sync
+
+package:
+  exclude:
+    - frontend/**
+    - node_modules/aws-sdk/**
+
+custom:
+  userPoolName: poc-user-pool
+  userPoolClientName: poc-user-pool-client
+  apiGatewayServiceProxies:
+    - s3:
+        path: /
+        method: get
+        action: GetObject
+        bucket:
+          Ref: WebBucket
+        key: index.html
+        cors: true
+    - s3:
+        path: /sign-in/{challenge}
+        method: get
+        action: GetObject
+        bucket:
+          Ref: WebBucket
+        key: index.html
+        cors: true
+    - s3:
+        path: /{myPath+}
+        method: get
+        action: GetObject
+        key:
+          pathParam: myPath
+        bucket:
+          Ref: WebBucket
+        cors: true
+  s3Sync:
+    - bucketName: poc-user-pool-web
+      localDir: frontend/build/
+      acl: public-read
+      followSymlinks: true
+      defaultContentType: text/html

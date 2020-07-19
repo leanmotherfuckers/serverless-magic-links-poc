@@ -1,0 +1,17 @@
+body {
+    margin: 48px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+}
+
+pre {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+    padding: 10px;
+    background: #f2f3f4;
+}
+
+input, button {
+    margin-right: 10px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    padding: 6px 12px;
+}
