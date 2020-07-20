@@ -4,6 +4,7 @@ This simple POC shows a good way to create a [user-friendly magic link login sys
 
 While functional and safe, this is not production-style code.
 
+
 ## User experience
 
 Some important things to note about this approach, which is different from most other tutorials and example code found online:
@@ -19,7 +20,7 @@ Some important things to note about this approach, which is different from most 
 Note that we've replaced the part of the code that would normally send the email with something that just outputs it to the browser, to simplify the demo code.
 
 
-## How it works
+## How does it work?
 
 1. When you click 'Sign in' after entering your email address, the React app performs a `POST /login`.
 2. This triggers a lambda that sets a custom user attribute called `authChallenge` with a value in the form of `{authChallenge},{timestamp}`. It will fail if there is no user with that email address defined. `authChallenge` is a random UUID.
@@ -28,9 +29,13 @@ Note that we've replaced the part of the code that would normally send the email
 5. It then redirects back to the home route, where the user will now be signed in.
 
 
-## Room for improvement
+## How safe is it?
 
-* Use a more deterministic method for generating `authChallenge`, so that if the user accidentally sends themselves more than one magic link email in a short period of time, the second send doesn't make the first link invalid.
+You won't be able to get access to a user's account without knowing their email address and having access to their inbox.
+
+Having the `authChallenge` as a random UUID adds enough entropy to make brute-force attacks unlikely, especially in combination with the login throttling that AWS Cognito has as a built-in feature.
+
+Adding an expiry date to the links (30 minutes in this example) means gaining access to old emails won't give attackers access to their accounts.
 
 
 ## How scalable is this?
@@ -38,3 +43,8 @@ Note that we've replaced the part of the code that would normally send the email
 This does a `AdminUpdateUserAttributes` request on every login. That method has a soft limit of 5 calls per second, which should be sufficient for most user bases, as the chance of more than 5 users signing in at the exact same second is probably very unlikely unless you have 50k+ active users.
 
 If so, you could ask AWS to raise that soft limit, and you should be good for at least another 250k MAUs. After that, it be time to start looking into something more robust to manage your authentication needs :)
+
+
+## How can we further improve UX?
+
+* Use a more deterministic method for generating `authChallenge`, so that if the user accidentally sends themselves more than one magic link email in a short period of time, the second send doesn't make the first link invalid. However, introducing determinism might make the system less safe if done incorrectly.
