@@ -34,6 +34,7 @@ You will need to deploy the project twice to make it work properly. The sequence
    endpoints:
      POST - https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/quynh/login
    ```
+
 Note: If you lost the output of the previous `npm run deploy` command on the terminal, you can run `npm run sls -- info` to get the information back.
 
 3. Open `$/frontend/src/components/LoginForm.js`, replace the value of constant `loginUrl` (line 4) with the captured URL.
@@ -62,6 +63,14 @@ Before you can test the magic link, you need to create at least one user in the 
 
 1. Go to the login page's URL of your service, e.g. `https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/quynh`
 2. Make sure you put in an email address of a user you have already created in the previous step.
+
+## Clean up
+
+Once you have finished with your testing, make sure you run:
+```
+npm run sls -- remove
+```
+to remove all the artefacts of your service from AWS.
 
 
 ## User experience
