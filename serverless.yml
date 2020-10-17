@@ -18,6 +18,7 @@ functions:
       - cognitoUserPool:
           pool: ${self:custom.userPoolName}
           trigger: DefineAuthChallenge
+          existing: true
 
   # 2. Create the actual auth challenge
   create-auth-challenge:
@@ -26,6 +27,7 @@ functions:
       - cognitoUserPool:
           pool: ${self:custom.userPoolName}
           trigger: CreateAuthChallenge
+          existing: true
 
   # 3. Verify auth challenge
   verify-auth-challenge:
@@ -34,6 +36,7 @@ functions:
       - cognitoUserPool:
           pool: ${self:custom.userPoolName}
           trigger: VerifyAuthChallengeResponse
+          existing: true
 
 # Set up Cognito & S3
 resources:
@@ -118,8 +121,8 @@ package:
     - node_modules/aws-sdk/**
 
 custom:
-  userPoolName: poc-user-pool
-  userPoolClientName: poc-user-pool-client
+  userPoolName: sls-magic-link-poc-user-pool
+  userPoolClientName: sls-magic-link-poc-pool-client
   webBucketName: sls-magic-link-poc-web
   apiGatewayServiceProxies:
     - s3:
