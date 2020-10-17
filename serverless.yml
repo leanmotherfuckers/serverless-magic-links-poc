@@ -18,7 +18,6 @@ functions:
       - cognitoUserPool:
           pool: ${self:custom.userPoolName}
           trigger: DefineAuthChallenge
-          existing: true
 
   # 2. Create the actual auth challenge
   create-auth-challenge:
@@ -27,7 +26,6 @@ functions:
       - cognitoUserPool:
           pool: ${self:custom.userPoolName}
           trigger: CreateAuthChallenge
-          existing: true
 
   # 3. Verify auth challenge
   verify-auth-challenge:
@@ -36,7 +34,6 @@ functions:
       - cognitoUserPool:
           pool: ${self:custom.userPoolName}
           trigger: VerifyAuthChallengeResponse
-          existing: true
 
 # Set up Cognito & S3
 resources:
@@ -89,7 +86,7 @@ resources:
     WebBucket:
       Type: "AWS::S3::Bucket"
       Properties:
-        BucketName: poc-user-pool-web
+        BucketName: ${self:custom.webBucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: index.html
@@ -97,7 +94,6 @@ resources:
 # Default serverless stuff
 provider:
   name: aws
-  profile: schof
   runtime: nodejs10.x
   region: eu-west-1
   stage: dev
@@ -124,6 +120,7 @@ package:
 custom:
   userPoolName: poc-user-pool
   userPoolClientName: poc-user-pool-client
+  webBucketName: sls-magic-link-poc-web
   apiGatewayServiceProxies:
     - s3:
         path: /
@@ -151,7 +148,7 @@ custom:
           Ref: WebBucket
         cors: true
   s3Sync:
-    - bucketName: poc-user-pool-web
+    - bucketName: ${self:custom.webBucketName}
       localDir: frontend/build/
       acl: public-read
       followSymlinks: true
