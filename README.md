@@ -4,6 +4,65 @@ This simple POC shows a good way to create a [user-friendly magic link login sys
 
 While functional and safe, this is not production-style code.
 
+## How to run this example
+
+### 1. Download and install dependencies
+
+```
+git clone git@github.com:mojitocoder/serverless-magic-links-poc.git
+cd serverless-magic-links-poc
+npm install
+```
+
+### 2. Create your unique environment
+
+This step is optional. You can skip this step if you are the only person to deploy this solution to a unique combination of AWS Account + AWS Region.
+
+To ensure the deployment does not fail or interupt with another deployment from a different user, make two changes as follows::
+
+1. Open `$/frontend/package.json`, change the value of `homepage` to a unique value, e.g. `lewis`.
+2. Open `$/serverless.yml`, make a similar change for `custom.stage` tag, e.g from ` stage: ${opt:stage, 'quynh'}` to ` stage: ${opt:stage, 'lewis'}`
+
+### 3. Deploy the project
+
+You will need to deploy the project twice to make it work properly. The sequence is: Deploy => Get some returned values to make changes to the frontend's settings => Deploy again to push updated frontend.
+
+1. Run `npm run deploy` to do the first deployment
+
+2. Capture the URL listed in `endpoints`' `POST` value, it looks like this:
+   ```
+   endpoints:
+     POST - https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/quynh/login
+   ```
+Note: If you lost the output of the previous `npm run deploy` command on the terminal, you can run `npm run sls -- info` to get the information back.
+
+3. Open `$/frontend/src/components/LoginForm.js`, replace the value of constant `loginUrl` (line 4) with the captured URL.
+
+4. Run `npm run sls -- info --verbose` to get the values of `UserPoolClientId` and `UserPoolId` from the `Stack Outputs`. They look like this:
+
+   ```
+   Stack Outputs
+   UserPoolClientId: 3l4s9hjp44tiq0jpab3f4nlhrj
+   UserPoolId: eu-west-1_v0L9STrqo
+   ```
+
+5. Put these two values into the appropriate places in `$/frontend/src/authConfig.js`. Whilst you are here, remember to change the `region` value in this file if this service is deployed to a different region from the default of `eu-west-1`.
+
+6. Deploy the project again using `npm run deploy` to push the latest changes to the frontend to AWS.
+
+### 4. Create users
+
+Before you can test the magic link, you need to create at least one user in the UserPool.
+
+1. Head AWS web console, go to `Cognito` service then `Manage User Pools`, e.g. https://eu-west-1.console.aws.amazon.com/cognito/users/?region=eu-west-1
+2. Select the pool created by your service, e.g. `sls-magic-link-poc-user-pool-lewis`
+3. Go to `General settings \ Users and groups` to create a user. Use an email for username.
+
+### 5. Test magic links 
+
+1. Go to the login page's URL of your service, e.g. `https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/quynh`
+2. Make sure you put in an email address of a user you have already created in the previous step.
+
 
 ## User experience
 
