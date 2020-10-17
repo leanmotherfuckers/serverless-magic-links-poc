@@ -11,7 +11,7 @@
   "license": "MIT",
   "devDependencies": {
     "aws-sdk": "^2.715.0",
-    "serverless": "^1.75.1",
+    "serverless": "^2.8.0",
     "serverless-apigateway-service-proxy": "^1.10.0",
     "serverless-s3-sync": "^1.14.4"
   },

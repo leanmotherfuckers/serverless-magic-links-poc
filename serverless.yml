@@ -1,5 +1,7 @@
 service: poc-magic-links
 
+frameworkVersion: '2'
+
 # Attaching handlers
 functions:
   # 0. Initiates sign-in
