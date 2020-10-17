@@ -5,7 +5,8 @@
   "description": "A simple POC implementation of best-practice UX for magic links.",
   "author": "Thomas Schoffelen <thomas@schof.co>",
   "scripts": {
-    "deploy": "cd frontend && yarn install && yarn build && cd .. && npx serverless deploy"
+    "deploy": "cd frontend && yarn install && yarn build && cd .. && npx serverless deploy",
+    "sls": "serverless"
   },
   "license": "MIT",
   "devDependencies": {
