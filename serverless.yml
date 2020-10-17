@@ -96,6 +96,13 @@ resources:
           IndexDocument: index.html
           ErrorDocument: index.html
 
+  Outputs:
+    UserPoolId: 
+      Value: !Ref UserPool
+    UserPoolClientId:
+      Value: !Ref UserPoolClient
+    
+
 # Default serverless stuff
 provider:
   name: aws
