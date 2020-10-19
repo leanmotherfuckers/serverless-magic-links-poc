@@ -21,7 +21,8 @@ This step is optional. You can skip this step if you are the only person to depl
 To ensure the deployment does not fail or interupt with another deployment from a different user, make two changes as follows::
 
 1. Open `$/frontend/package.json`, change the value of `homepage` to a unique value, e.g. `lewis`.
-2. Open `$/serverless.yml`, make a similar change for `custom.stage` tag, e.g from ` stage: ${opt:stage, 'quynh'}` to ` stage: ${opt:stage, 'lewis'}`
+2. Open `$/frontend/src/App.js`, change the value of `basename` to your value, e.g. `lewis`
+3. Open `$/serverless.yml`, make a similar change for `custom.stage` tag, e.g from ` stage: ${opt:stage, 'quynh'}` to ` stage: ${opt:stage, 'lewis'}`
 
 ### 3. Deploy the project
 
