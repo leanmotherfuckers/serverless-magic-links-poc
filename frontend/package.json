@@ -20,7 +20,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "/quynh",
+  "homepage": "/dev",
   "eslintConfig": {
     "extends": "react-app"
   },
