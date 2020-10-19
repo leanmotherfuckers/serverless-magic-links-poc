@@ -22,7 +22,7 @@ To ensure the deployment does not fail or interupt with another deployment from 
 
 1. Open `$/frontend/package.json`, change the value of `homepage` to a unique value, e.g. `lewis`.
 2. Open `$/frontend/src/App.js`, change the value of `basename` to your value, e.g. `lewis`
-3. Open `$/serverless.yml`, make a similar change for `custom.stage` tag, e.g from ` stage: ${opt:stage, 'quynh'}` to ` stage: ${opt:stage, 'lewis'}`
+3. Open `$/serverless.yml`, make a similar change for `custom.stage` tag, e.g from ` stage: ${opt:stage, 'dev'}` to ` stage: ${opt:stage, 'lewis'}`
 
 ### 3. Deploy the project
 
@@ -33,7 +33,7 @@ You will need to deploy the project twice to make it work properly. The sequence
 2. Capture the URL listed in `endpoints`' `POST` value, it looks like this:
    ```
    endpoints:
-     POST - https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/quynh/login
+     POST - https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/dev/login
    ```
 
 Note: If you lost the output of the previous `npm run deploy` command on the terminal, you can run `npm run sls -- info` to get the information back.
@@ -62,7 +62,7 @@ Before you can test the magic link, you need to create at least one user in the 
 
 ### 5. Test magic links 
 
-1. Go to the login page's URL of your service, e.g. `https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/quynh`
+1. Go to the login page's URL of your service, e.g. `https://h3avtopjn8.execute-api.eu-west-1.amazonaws.com/dev`
 2. Make sure you put in an email address of a user you have already created in the previous step.
 
 ## Clean up
