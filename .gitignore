@@ -2,3 +2,4 @@ node_modules
 frontend/build
 .serverless
 .webpack
+package-lock.json

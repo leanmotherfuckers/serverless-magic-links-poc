@@ -5,12 +5,13 @@
   "description": "A simple POC implementation of best-practice UX for magic links.",
   "author": "Thomas Schoffelen <thomas@schof.co>",
   "scripts": {
-    "deploy": "cd frontend && yarn build && cd .. && serverless deploy"
+    "deploy": "cd frontend && yarn install && yarn build && cd .. && npx serverless deploy",
+    "sls": "serverless"
   },
   "license": "MIT",
   "devDependencies": {
     "aws-sdk": "^2.715.0",
-    "serverless": "^1.75.1",
+    "serverless": "^2.8.0",
     "serverless-apigateway-service-proxy": "^1.10.0",
     "serverless-s3-sync": "^1.14.4"
   },

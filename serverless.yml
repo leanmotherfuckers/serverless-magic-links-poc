@@ -1,5 +1,7 @@
 service: poc-magic-links
 
+frameworkVersion: '2'
+
 # Attaching handlers
 functions:
   # 0. Initiates sign-in
@@ -89,18 +91,24 @@ resources:
     WebBucket:
       Type: "AWS::S3::Bucket"
       Properties:
-        BucketName: poc-user-pool-web
+        BucketName: ${self:custom.webBucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: index.html
 
+  Outputs:
+    UserPoolId: 
+      Value: !Ref UserPool
+    UserPoolClientId:
+      Value: !Ref UserPoolClient
+    
+
 # Default serverless stuff
 provider:
   name: aws
-  profile: schof
   runtime: nodejs10.x
   region: eu-west-1
-  stage: dev
+  stage: ${self:custom.stage}
   environment:
     URL: {"Fn::Join": ["", ["https://", {"Ref": "ApiGatewayRestApi"}, ".execute-api.${self:provider.region}.amazonaws.com/${self:provider.stage}"]]}
     USER_POOL_ID: {"Ref": "UserPool"}
@@ -122,8 +130,11 @@ package:
     - node_modules/aws-sdk/**
 
 custom:
-  userPoolName: poc-user-pool
-  userPoolClientName: poc-user-pool-client
+  stage: ${opt:stage, 'dev'}
+  userPoolName: sls-magic-link-poc-user-pool-${self:custom.stage}
+  userPoolClientName: sls-magic-link-poc-pool-client-${self:custom.stage}
+  webBucketName: sls-magic-link-poc-web-${self:custom.stage}
+
   apiGatewayServiceProxies:
     - s3:
         path: /
@@ -151,7 +162,7 @@ custom:
           Ref: WebBucket
         cors: true
   s3Sync:
-    - bucketName: poc-user-pool-web
+    - bucketName: ${self:custom.webBucketName}
       localDir: frontend/build/
       acl: public-read
       followSymlinks: true
