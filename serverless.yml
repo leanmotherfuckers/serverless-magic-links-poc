@@ -130,7 +130,7 @@ package:
     - node_modules/aws-sdk/**
 
 custom:
-  stage: ${opt:stage, 'dev'}
+  stage: ${opt:stage, 'triggs'}
   userPoolName: sls-magic-link-poc-user-pool-${self:custom.stage}
   userPoolClientName: sls-magic-link-poc-pool-client-${self:custom.stage}
   webBucketName: sls-magic-link-poc-web-${self:custom.stage}
